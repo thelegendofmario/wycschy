@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2kigx3m6xliu"]
+
+[ext_resource type="Texture2D" uid="uid://y0yk524q10bi" path="res://icon.svg" id="1_eumkw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tuehi"]
+size = Vector2(128, 128)
+
+[node name="Teleporter" type="StaticBody2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_eumkw")
+
+[node name="bounds" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_tuehi")
+
+[node name="TLeft" type="Marker2D" parent="."]
+position = Vector2(-64, -64)
+
+[node name="TRight" type="Marker2D" parent="."]
+
+[node name="BLeft" type="Marker2D" parent="."]
+position = Vector2(-64, 64)
+
+[node name="BRight" type="Marker2D" parent="."]
+position = Vector2(64, 64)

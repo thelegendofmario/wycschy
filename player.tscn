@@ -1,0 +1,49 @@
+[gd_scene load_steps=7 format=3 uid="uid://k5i1xvx0ufv7"]
+
+[ext_resource type="Script" uid="uid://c34waokufyn44" path="res://player.gd" id="1_onrkg"]
+[ext_resource type="Texture2D" uid="uid://y0yk524q10bi" path="res://icon.svg" id="2_i3pqv"]
+[ext_resource type="Script" uid="uid://cyltbwvarl81w" path="res://camera_2d.gd" id="3_i3pqv"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_onrkg"]
+polygon = PackedVector2Array(64, -64, -64, -64, -64, 64, 64, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hqtel"]
+size = Vector2(112, 112)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_onrkg"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="Player" type="CharacterBody2D"]
+scale = Vector2(0.5, 0.5)
+collision_layer = 2
+motion_mode = 1
+script = ExtResource("1_onrkg")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_i3pqv")
+
+[node name="TLeft" type="Marker2D" parent="."]
+position = Vector2(-54, -54)
+
+[node name="TRight" type="Marker2D" parent="."]
+position = Vector2(54, -54)
+
+[node name="BLeft" type="Marker2D" parent="."]
+position = Vector2(-54, 54)
+
+[node name="BRight" type="Marker2D" parent="."]
+position = Vector2(54, 54)
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+occluder = SubResource("OccluderPolygon2D_onrkg")
+
+[node name="bounds" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_hqtel")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_onrkg")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+script = ExtResource("3_i3pqv")
