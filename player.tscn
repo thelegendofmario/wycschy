@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://k5i1xvx0ufv7"]
+[gd_scene load_steps=12 format=3 uid="uid://k5i1xvx0ufv7"]
 
 [ext_resource type="Script" uid="uid://c34waokufyn44" path="res://player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://y0yk524q10bi" path="res://icon.svg" id="2_i3pqv"]
@@ -9,6 +9,9 @@ light_mode = 2
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_i3pqv"]
 light_mode = 2
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hqtel"]
+size = Vector2(112, 112)
 
 [sub_resource type="Gradient" id="Gradient_i3pqv"]
 interpolation_mode = 2
@@ -22,15 +25,27 @@ fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0.1, 0.2)
 metadata/_snap_enabled = true
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_hqtel"]
-size = Vector2(112, 112)
-
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_onrkg"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
+properties/1/path = NodePath("Gun:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("Gun/Sprite2D:flip_v")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath("ProgressBar:value")
+properties/3/spawn = true
+properties/3/replication_mode = 1
 
-[node name="Player" type="CharacterBody2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i3pqv"]
+size = Vector2(96, 96)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_sweqy"]
+light_mode = 2
+
+[node name="Player" type="CharacterBody2D" groups=["PlayerCollision"]]
 material = SubResource("CanvasItemMaterial_hqtel")
 scale = Vector2(0.5, 0.5)
 collision_layer = 2
@@ -40,6 +55,9 @@ script = ExtResource("1_onrkg")
 [node name="Sprite" type="Sprite2D" parent="."]
 material = SubResource("CanvasItemMaterial_i3pqv")
 texture = ExtResource("2_i3pqv")
+
+[node name="bounds" type="CollisionShape2D" parent="." groups=["PlayerCollision"]]
+shape = SubResource("RectangleShape2D_hqtel")
 
 [node name="TLeft" type="Marker2D" parent="."]
 position = Vector2(-54, -54)
@@ -54,14 +72,11 @@ position = Vector2(-54, 54)
 position = Vector2(54, 54)
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
-position = Vector2(-3.8147e-05, -1.52588e-05)
+position = Vector2(0, 10)
 scale = Vector2(16, 16)
 blend_mode = 2
 shadow_enabled = true
 texture = SubResource("GradientTexture2D_hqtel")
-
-[node name="bounds" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_hqtel")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_onrkg")
@@ -73,3 +88,30 @@ one_shot = true
 
 [node name="PlayerCamera" parent="." instance=ExtResource("3_i3pqv")]
 metadata/_edit_group_ = true
+
+[node name="bulletContainer" type="Area2D" parent="." groups=["PlayerCollision"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="bulletContainer"]
+shape = SubResource("RectangleShape2D_i3pqv")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -64.0
+offset_top = -98.0
+offset_right = 64.0
+offset_bottom = -72.0
+value = 100.0
+show_percentage = false
+
+[node name="Gun" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Gun"]
+material = SubResource("CanvasItemMaterial_sweqy")
+position = Vector2(128, 0)
+texture = ExtResource("2_i3pqv")
+region_enabled = true
+region_rect = Rect2(0, 0, 68, 32)
+
+[node name="Muzzle" type="Marker2D" parent="Gun/Sprite2D"]
+position = Vector2(32, 0)
+
+[connection signal="area_entered" from="bulletContainer" to="." method="_on_bullet_container_area_entered"]

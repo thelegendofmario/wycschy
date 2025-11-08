@@ -1,37 +1,50 @@
-class_name Player
 extends CharacterBody2D
 
+class_name Player
 
+@export var maxDist: float = 239.5
+var bulletScene: PackedScene = preload("res://bullet.tscn")
+var maxHealth: float = 10
+var health: float = maxHealth
+#var damage: int = 1
 const SPEED = 300.0
 const JUMP_VELOCITY = -400.0
 var auth_player
-@export var maxDist: float = 239.5
 var listofpoints = []
-var visibilityIndicator: Label = Label.new()
 var playerIndicator: Label = Label.new()
 var invisible: bool = false
 var can_teleport: bool = true
+var username: String
+
 
 func _enter_tree() -> void:
 	setup()
-	$PlayerCamera/HUD/VBoxContainer.add_child(visibilityIndicator)
-	
-	$PlayerCamera/HUD/VBoxContainer/ProgressBar.max_value = $TeleportCooldown.wait_time
+	get_exclusions()
+	$PlayerCamera/HUD/Control/WarningLabel.hide()
+	$PlayerCamera/HUD/Control/VBoxContainer/ProgressBar.max_value = $TeleportCooldown.wait_time
+	$ProgressBar.max_value = maxHealth
 
 func _physics_process(delta: float) -> void:
 	if !is_multiplayer_authority():
 		$Sprite.modulate = Color.RED
 		return
 		
+	calc_visibility()
+	
+	$ProgressBar.value = health
+	
+	$Gun.look_at(get_global_mouse_position())
+	if get_global_mouse_position().x < position.x:
+		$Gun/Sprite2D.flip_v = true
 	else:
-		calc_visibility()
+		$Gun/Sprite2D.flip_v = false
 	
 	var a: TileMapLayer = get_parent().get_node("Level")
 	
 	var aSet: TileSet = a.tile_set
-	aSet.phys
+	#aSet.phys
 	
-	$PlayerCamera/HUD/VBoxContainer/ProgressBar.value = $TeleportCooldown.time_left
+	$PlayerCamera/HUD/Control/VBoxContainer/ProgressBar.value = $TeleportCooldown.time_left
 	# Handle jump.
 	var direction_vert := Input.get_axis("up", "down")
 	if direction_vert:
@@ -46,6 +59,14 @@ func _physics_process(delta: float) -> void:
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
+	
+	if Input.is_action_just_pressed("shoot"):
+		shoot.rpc()
+	
+	if !invisible:
+		$PlayerCamera/HUD/Control/WarningLabel.show()
+	else:
+		$PlayerCamera/HUD/Control/WarningLabel.hide()
 	
 	if invisible && Input.is_action_just_pressed("teleport") && $TeleportCooldown.is_stopped()&& can_teleport:
 		position = get_global_mouse_position()
@@ -110,12 +131,15 @@ func calc_visibility() -> void:
 			#print(dist)
 
 	if seen_by == -len(players_list):
-		visibilityIndicator.text = "invisible..."
 		invisible = true
 	else:
-		visibilityIndicator.text = "visible by one or more nodes!!"
 		invisible = false
 
+@rpc("call_local")
+func shoot():
+	var bullet: Bullet = bulletScene.instantiate()
+	bullet.transform = $Gun/Sprite2D/Muzzle.global_transform
+	get_parent().add_child(bullet)
 
 func get_my_player():
 	for player in Global.players:
@@ -130,3 +154,28 @@ func setup():
 	print("line 13 (auth_player, int(str(name))): ", auth_player, " ", int(str(name)))
 	if !is_multiplayer_authority():
 		$PointLight2D.queue_free()
+
+func take_damage(amnt):
+	health -= amnt
+	print("that hurt :(")
+
+func get_exclusions():
+	var exc: Area2D = get_parent().get_node("Exclude")
+	exc.mouse_entered.connect(mouse_entered_exc)
+	var good: Area2D = get_parent().get_node("MouseArea")
+	good.mouse_entered.connect(mouse_enterd_good)
+
+func mouse_entered_exc() -> void:
+	print("mouse entered")
+	can_teleport = false
+
+func mouse_enterd_good() -> void:
+	print("mouse exited")
+	can_teleport = true
+
+
+func _on_bullet_container_area_entered(area: Area2D) -> void:
+	if area.is_in_group("bullet"):
+		print("Hello!")
+		area.queue_free()
+		take_damage(1)
