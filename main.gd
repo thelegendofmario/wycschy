@@ -5,6 +5,9 @@ const port = 22526
 var peer = ENetMultiplayerPeer.new()
 @export var PLAYER: PackedScene
 @onready var multiplayer_ui = $UI/Multiplayer
+@onready var end_ui = $UI/EndUI
+var winning_score = 1
+@export var scores: Array
 #var players : Array[Player] = []
 
 # Called when the node enters the scene tree for the first time.
@@ -12,11 +15,22 @@ func _ready() -> void:
 	$CanvasModulate.color = Color(0.392, 0.392, 0.392)
 	print(IP.get_local_addresses())
 	$PlayerSpawner.spawn_function = add_player
-
+	$UI/Multiplayer/HSplitContainer/VBoxContainer/IP.text = IP.get_local_addresses()[0]
+	end_ui.hide()
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
-	pass
-
+	for player in Global.players:
+		Global.scores[Global.players.find(player)] = player.points
+	scores = Global.scores
+	if scores.has(winning_score):
+		var idx = scores.find(winning_score)
+		var winner = get_node(Global.playerNames[idx]).username
+		print(Global.playerNames[idx])
+		print(Global.players[idx].username)
+		print(winner, " is the winner! scores for reference: ", Global.scores, " player list: ", Global.playerNames)
+		end_ui.show()
+		$UI/EndUI/VBoxContainer/WinnerLabel.text = str(winner+" is the winner!!")
+		get_tree().paused = true
 func _on_host_pressed() -> void:
 	peer.create_server(port)
 	multiplayer.multiplayer_peer = peer
@@ -43,5 +57,9 @@ func add_player(id):
 	
 	Global.players.append(player)
 	Global.playerNames.append(player.name)
-	Global.usernames.append(aName)
+	Global.scores.append(player.points)
+	print(Global.players)
+	print(Global.scores)
+	player.index = len(Global.scores)-1
+	print(Global.scores[player.index])
 	return player

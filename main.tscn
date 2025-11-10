@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4 uid="uid://cejigdgnno7yh"]
+[gd_scene load_steps=12 format=4 uid="uid://cejigdgnno7yh"]
 
 [ext_resource type="Script" uid="uid://p0hbk7gwfs3w" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="Texture2D" uid="uid://y0yk524q10bi" path="res://icon.svg" id="1_ig7tw"]
@@ -77,7 +77,13 @@ occlusion_layer_0/light_mask = 1
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_1bvp3")
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_h2yge"]
+properties/0/path = NodePath(".:scores")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
 [node name="main" type="Node2D"]
+process_mode = 1
 script = ExtResource("1_h2yge")
 PLAYER = ExtResource("3_h2yge")
 
@@ -134,7 +140,30 @@ spawn_path = NodePath("..")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
+[node name="EndUI" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/EndUI"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -390.0
+offset_right = 390.0
+offset_bottom = 118.0
+grow_horizontal = 2
+
+[node name="WinnerLabel" type="Label" parent="UI/EndUI/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 86
+text = "____ is the winner!!!"
+
 [node name="Multiplayer" type="Control" parent="UI"]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -210,6 +239,9 @@ spacebar - teleport to mouse position
 click - shoot towards mouse position
 ------------------------------
 You can only teleport if you are not seen by anyone"
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_h2yge")
 
 [connection signal="pressed" from="UI/Multiplayer/HSplitContainer/VBoxContainer/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="UI/Multiplayer/HSplitContainer/VBoxContainer/Join" to="." method="_on_join_pressed"]

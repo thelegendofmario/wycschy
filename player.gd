@@ -5,7 +5,7 @@ class_name Player
 @export var maxDist: float = 239.5
 var bulletScene: PackedScene = preload("res://bullet.tscn")
 var maxHealth: float = 10
-var health: float = maxHealth
+@export var health: float = maxHealth
 #var damage: int = 1
 const SPEED = 300.0
 const JUMP_VELOCITY = -400.0
@@ -14,7 +14,10 @@ var listofpoints = []
 var playerIndicator: Label = Label.new()
 var invisible: bool = false
 var can_teleport: bool = true
-var username: String
+@export var username: String
+@export var points: int
+var index
+signal killed
 
 
 func _enter_tree() -> void:
@@ -23,6 +26,7 @@ func _enter_tree() -> void:
 	$PlayerCamera/HUD/Control/WarningLabel.hide()
 	$PlayerCamera/HUD/Control/VBoxContainer/ProgressBar.max_value = $TeleportCooldown.wait_time
 	$ProgressBar.max_value = maxHealth
+	$UsernameLabel.text = username
 
 func _physics_process(delta: float) -> void:
 	if !is_multiplayer_authority():
@@ -61,7 +65,7 @@ func _physics_process(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 	
 	if Input.is_action_just_pressed("shoot"):
-		shoot.rpc()
+		shoot.rpc(multiplayer.get_unique_id())
 	
 	if !invisible:
 		$PlayerCamera/HUD/Control/WarningLabel.show()
@@ -72,6 +76,10 @@ func _physics_process(delta: float) -> void:
 		position = get_global_mouse_position()
 		invisible = false
 		$TeleportCooldown.start()
+		
+	if Input.is_action_just_pressed("seeScores"):
+		print(name)
+		print(Global.scores)
 	move_and_slide()
 
 
@@ -136,10 +144,14 @@ func calc_visibility() -> void:
 		invisible = false
 
 @rpc("call_local")
-func shoot():
+func shoot(shooter_pid):
 	var bullet: Bullet = bulletScene.instantiate()
+	bullet.set_multiplayer_authority(shooter_pid)
 	bullet.transform = $Gun/Sprite2D/Muzzle.global_transform
+	bullet.owner_index = get_parent().get_node(str(shooter_pid)).index
+	print(bullet.owner_index)
 	get_parent().add_child(bullet)
+	
 
 func get_my_player():
 	for player in Global.players:
@@ -155,27 +167,29 @@ func setup():
 	if !is_multiplayer_authority():
 		$PointLight2D.queue_free()
 
-func take_damage(amnt):
+@rpc("any_peer")
+func take_damage(amnt: int):
 	health -= amnt
-	print("that hurt :(")
+	print("I was hit by a bullet!")
+	if health <= 0:
+		respawn()
+
+func respawn():
+	global_position = get_parent().get_node("Level").get_child(randi_range(0, Global.players.size())).global_position
+	killed.emit(index)
+	
+	health = maxHealth
 
 func get_exclusions():
 	var exc: Area2D = get_parent().get_node("Exclude")
 	exc.mouse_entered.connect(mouse_entered_exc)
 	var good: Area2D = get_parent().get_node("MouseArea")
-	good.mouse_entered.connect(mouse_enterd_good)
+	good.mouse_entered.connect(mouse_entered_good)
 
 func mouse_entered_exc() -> void:
 	print("mouse entered")
 	can_teleport = false
 
-func mouse_enterd_good() -> void:
+func mouse_entered_good() -> void:
 	print("mouse exited")
 	can_teleport = true
-
-
-func _on_bullet_container_area_entered(area: Area2D) -> void:
-	if area.is_in_group("bullet"):
-		print("Hello!")
-		area.queue_free()
-		take_damage(1)
