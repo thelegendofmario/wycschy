@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://k5i1xvx0ufv7"]
+[gd_scene load_steps=14 format=3 uid="uid://k5i1xvx0ufv7"]
 
 [ext_resource type="Script" uid="uid://c34waokufyn44" path="res://player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://y0yk524q10bi" path="res://icon.svg" id="2_i3pqv"]
@@ -54,6 +54,12 @@ properties/7/replication_mode = 1
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i3pqv"]
 size = Vector2(96, 96)
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_2hs0m"]
+light_mode = 2
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_1jxqw"]
+light_mode = 2
+
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_sweqy"]
 light_mode = 2
 
@@ -107,6 +113,7 @@ metadata/_edit_group_ = true
 shape = SubResource("RectangleShape2D_i3pqv")
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
+material = SubResource("CanvasItemMaterial_2hs0m")
 offset_left = -64.0
 offset_top = -98.0
 offset_right = 64.0
@@ -115,10 +122,12 @@ value = 100.0
 show_percentage = false
 
 [node name="UsernameLabel" type="Label" parent="."]
+material = SubResource("CanvasItemMaterial_1jxqw")
 offset_left = -62.0
-offset_top = -96.0
-offset_right = -5.0
-offset_bottom = -72.0
+offset_top = -100.0
+offset_right = 34.0
+offset_bottom = -63.0
+theme_override_font_sizes/font_size = 27
 text = "Default"
 
 [node name="Gun" type="Node2D" parent="."]

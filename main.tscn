@@ -141,6 +141,7 @@ spawn_path = NodePath("..")
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="EndUI" type="Control" parent="UI"]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
@@ -148,19 +149,30 @@ grow_horizontal = 2
 size_flags_vertical = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/EndUI"]
+process_mode = 3
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -390.0
-offset_right = 390.0
+offset_left = -576.0
+offset_right = 448.0
 offset_bottom = 118.0
 grow_horizontal = 2
 
 [node name="WinnerLabel" type="Label" parent="UI/EndUI/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-theme_override_font_sizes/font_size = 86
-text = "____ is the winner!!!"
+theme_override_font_sizes/font_size = 80
+text = ":D"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Button" type="Button" parent="UI/EndUI/VBoxContainer"]
+process_mode = 3
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Quit"
 
 [node name="Multiplayer" type="Control" parent="UI"]
 process_mode = 3
@@ -179,10 +191,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -576.5
-offset_top = -324.0
-offset_right = 576.5
-offset_bottom = 324.0
+offset_left = -366.5
+offset_top = -206.0
+offset_right = 366.5
+offset_bottom = 206.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -243,5 +255,6 @@ You can only teleport if you are not seen by anyone"
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_h2yge")
 
+[connection signal="pressed" from="UI/EndUI/VBoxContainer/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="UI/Multiplayer/HSplitContainer/VBoxContainer/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="UI/Multiplayer/HSplitContainer/VBoxContainer/Join" to="." method="_on_join_pressed"]

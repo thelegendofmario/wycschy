@@ -6,7 +6,7 @@ var peer = ENetMultiplayerPeer.new()
 @export var PLAYER: PackedScene
 @onready var multiplayer_ui = $UI/Multiplayer
 @onready var end_ui = $UI/EndUI
-var winning_score = 1
+var winning_score = 5
 @export var scores: Array
 #var players : Array[Player] = []
 
@@ -63,3 +63,8 @@ func add_player(id):
 	player.index = len(Global.scores)-1
 	print(Global.scores[player.index])
 	return player
+
+
+func _on_button_pressed() -> void:
+	get_tree().paused = false
+	get_tree().quit()

@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cp6i4p37tto30" path="res://bullet.gd" id="1_v8qja"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_v8qja"]
+light_mode = 2
 particles_animation = true
 particles_anim_h_frames = 1
 particles_anim_v_frames = 1
