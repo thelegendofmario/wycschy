@@ -3,7 +3,7 @@ extends CharacterBody2D
 class_name Player
 
 @export var maxDist: float = 239.5
-var bulletScene: PackedScene = preload("res://bullet.tscn")
+var bulletScene: PackedScene = preload("res://scenes/bullet.tscn")
 var maxHealth: float = 10
 @export var health: float = maxHealth
 #var damage: int = 1

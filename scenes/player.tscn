@@ -1,8 +1,8 @@
 [gd_scene load_steps=14 format=3 uid="uid://k5i1xvx0ufv7"]
 
-[ext_resource type="Script" uid="uid://c34waokufyn44" path="res://player.gd" id="1_onrkg"]
+[ext_resource type="Script" uid="uid://c34waokufyn44" path="res://scripts/player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://y0yk524q10bi" path="res://icon.svg" id="2_i3pqv"]
-[ext_resource type="PackedScene" uid="uid://bxoxd2w8yq8du" path="res://player_camera.tscn" id="3_i3pqv"]
+[ext_resource type="PackedScene" uid="uid://bxoxd2w8yq8du" path="res://scenes/player_camera.tscn" id="3_i3pqv"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_hqtel"]
 light_mode = 2

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c8bimqnl7px5s"]
 
-[ext_resource type="Texture2D" uid="uid://y0yk524q10bi" path="res://icon.svg" id="1_v7oki"]
-[ext_resource type="Script" uid="uid://cp6i4p37tto30" path="res://bullet.gd" id="1_v8qja"]
+[ext_resource type="Script" uid="uid://cp6i4p37tto30" path="res://scripts/bullet.gd" id="1_y25gk"]
+[ext_resource type="Texture2D" uid="uid://y0yk524q10bi" path="res://icon.svg" id="2_l5glv"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_v8qja"]
 light_mode = 2
@@ -15,11 +15,11 @@ size = Vector2(16, 16)
 
 [node name="Bullet" type="Area2D" groups=["bullet"]]
 collision_mask = 3
-script = ExtResource("1_v8qja")
+script = ExtResource("1_y25gk")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 material = SubResource("CanvasItemMaterial_v8qja")
-texture = ExtResource("1_v7oki")
+texture = ExtResource("2_l5glv")
 region_enabled = true
 region_rect = Rect2(58, 9, 16, 16)
 
