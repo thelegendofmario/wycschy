@@ -201,13 +201,28 @@ func get_exclusions():
 
 func compute_scores():
 	var scoresLabels: Array[Label] = []
+	var scores: Array[Array] = []
 	for i: Label in $PlayerCamera/HUD/Control/Control/ScoreContainer.get_children():
 		i.queue_free()
 	for i in Global.players:
+		var scr = str(Global.scores[i.index])
+		scores.append([i.username, scr])
+	
+	scores.sort_custom(
+		func(a, b):
+			return a[1]>b[1]
+	)
+	
+	for i in scores:
 		var lbl: Label = Label.new()
-		lbl.text = i.username+": "+str(Global.scores[i.index])
-		scoresLabels.append(lbl)
-		#$PlayerCamera/HUD/Control/Control/ScoreContainer.add_child(lbl)
+		var st = ""
+		if i[0] == username:
+			lbl.add_theme_color_override("font_color", Color.RED)
+		if i[1] == str(get_parent().winning_score-1):
+			lbl.add_theme_font_size_override("font_size", 20)
+			st = "!!"
+		lbl.text = st+" "+i[0]+": "+i[1]+" "+st
+		$PlayerCamera/HUD/Control/Control/ScoreContainer.add_child(lbl)
 
 func mouse_entered_exc() -> void:
 	print("mouse entered")

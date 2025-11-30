@@ -6,7 +6,7 @@ var peer = ENetMultiplayerPeer.new()
 @export var PLAYER: PackedScene
 @onready var multiplayer_ui = $UI/Multiplayer
 @onready var end_ui = $UI/EndUI
-var winning_score = 5
+const winning_score = 5
 @export var scores: Array
 #var players : Array[Player] = []
 
