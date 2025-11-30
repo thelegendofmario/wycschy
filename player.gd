@@ -23,7 +23,10 @@ signal killed
 func _enter_tree() -> void:
 	setup()
 	get_exclusions()
+	
 	$PlayerCamera/HUD/Control/WarningLabel.hide()
+	$PlayerCamera/HUD/Control/Control/ScoreContainer.hide()
+	
 	$PlayerCamera/HUD/Control/VBoxContainer/ProgressBar.max_value = $TeleportCooldown.wait_time
 	$ProgressBar.max_value = maxHealth
 	$UsernameLabel.text = username
@@ -80,6 +83,10 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("seeScores"):
 		print(name)
 		print(Global.scores)
+		compute_scores()
+		$PlayerCamera/HUD/Control/Control/ScoreContainer.show()
+	if Input.is_action_just_released("seeScores"):
+		$PlayerCamera/HUD/Control/Control/ScoreContainer.hide()
 	move_and_slide()
 
 
@@ -175,7 +182,7 @@ func take_damage(amnt: int):
 		respawn()
 
 func respawn():
-	global_position = get_parent().get_node("Level").get_child(randi_range(0, Global.players.size())).global_position
+	global_position = get_parent().get_node("Level").get_child(randi_range(0, Global.players.size()-1)).global_position
 	killed.emit(index)
 	
 	health = maxHealth
@@ -185,6 +192,22 @@ func get_exclusions():
 	exc.mouse_entered.connect(mouse_entered_exc)
 	var good: Area2D = get_parent().get_node("MouseArea")
 	good.mouse_entered.connect(mouse_entered_good)
+
+#func make_score_display():
+	#for i in Global.players:
+		#var a: Label = Label.new()
+		#a.text = "placeholder"
+		#$PlayerCamera/HUD/Control/Control/ScoreContainer.add_child(a)
+
+func compute_scores():
+	var scoresLabels: Array[Label] = []
+	for i: Label in $PlayerCamera/HUD/Control/Control/ScoreContainer.get_children():
+		i.queue_free()
+	for i in Global.players:
+		var lbl: Label = Label.new()
+		lbl.text = i.username+": "+str(Global.scores[i.index])
+		scoresLabels.append(lbl)
+		#$PlayerCamera/HUD/Control/Control/ScoreContainer.add_child(lbl)
 
 func mouse_entered_exc() -> void:
 	print("mouse entered")
